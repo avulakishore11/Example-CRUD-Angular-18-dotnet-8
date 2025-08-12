@@ -1,1 +1,7 @@
-
+# Stage:1 to build the code.
+FROM node:18-alpine
+WORKDIR /project
+COPY package.json ./
+RUN npm install
+COPY . .
+RUN npm run build --configuration=production
