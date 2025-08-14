@@ -1,48 +1,35 @@
-import { Injectable } from '@angular/core'
-import { HttpClient } from '@angular/common/http'
-import { Observable } from 'rxjs'
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
-
 export class ProductService {
+  // Base URL for all product operations. nginx proxies /api to your backend.
+  private readonly base = '/api/products';
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
-  get(id?: any): Observable<any> {
-    if (id) {
-      return this.http.get(`/products/${id}`)
-    }
-    else {
-      return this.http.get('/products' + location.search)
-    }
+  /** Get all products or a single product by id */
+  get(id?: number): Observable<any> {
+    const url = id ? `${this.base}/${id}` : `${this.base}${location.search}`;
+    return this.http.get(url);
   }
 
-  create(data?: any): Observable<any> {
-    if (data) {
-      return this.http.post('/products', data)
-    }
-    else {
-      return this.http.get('/products/create')
-    }
+  /** Create a new product */
+  create(data: any): Observable<any> {
+    // data: { name: string, price: number }
+    return this.http.post(this.base, data);
   }
 
-  edit(id: any, data?: any): Observable<any> {
-    if (data) {
-      return this.http.put(`/products/${id}`, data)
-    }
-    else {
-      return this.http.get(`/products/${id}`)
-    }
+  /** Update an existing product */
+  edit(id: number, data: any): Observable<any> {
+    return this.http.put(`${this.base}/${id}`, data);
   }
 
-  delete(id: any, data?: any): Observable<any> {
-    if (data) {
-      return this.http.delete(`/products/${id}`)
-    }
-    else {
-      return this.http.get(`/products/${id}`)
-    }
+  /** Delete a product */
+  delete(id: number): Observable<any> {
+    return this.http.delete(`${this.base}/${id}`);
   }
 }
